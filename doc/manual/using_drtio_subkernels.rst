@@ -95,10 +95,9 @@ Subkernels behave for the most part like regular kernels; they accept arguments,
 
    - subkernels do not support RPCs,
    - subkernels do not support (recursive) DRTIO (but they can call other subkernels and send messages to each other, see below),
-   - they support DMA, for which DDMA is considered always enabled,  
+   - they support DMA, for which DDMA is considered always enabled,
    - their return values must be fully annotated with an ARTIQ type,
    - their arguments should be annotated, and only basic ARTIQ types are supported,
-   - they can raise exceptions, but the exceptions cannot be caught by the master (they can only be caught locally or propagated directly to the host), 
    - while ``self`` is allowed as an argument, it is retrieved at compile time and exists as a purely local object afterwards. Any changes made by other kernels will not be visible, and changes made locally will not be applied anywhere else.
 
 Subkernels in practice
@@ -176,7 +175,10 @@ Subkernels can call other kernels and subkernels. For a more complex example: ::
 In this case, without the preload, the delay after the core reset would need to be longer. Depending on the connection, the call may still take some time in itself. Notice that the method ``pulse_ttl()`` can be called both within a subkernel and on its own. 
 
 .. note:: 
-    Subkernels can call subkernels on any other satellite, not only their own. Care should however be taken that different kernels do not call subkernels on the same satellite, or only very cautiously. If, e.g., a newer call overrides a subkernel that another caller is awaiting, unpredictable timeouts or locks may result, as the original subkernel will never return. There is not currently any mechanism to check whether a particular satellite is 'busy'; it is up to the programmer to handle this correctly. 
+    Subkernels can call subkernels on any other satellite, not only their own. Care should however be taken that different kernels do not call subkernels on the same satellite, or only very cautiously. If, e.g., a newer call overrides a subkernel that another caller is awaiting, unpredictable timeouts or locks may result, as the original subkernel will never return. There is not currently any mechanism to check whether a particular satellite is 'busy'; it is up to the programmer to handle this correctly.
+
+.. note:: 
+    Exceptions raised by a subkernel can be caught by the originating subkernel, the master kernel (if awaited), or propagated to the host. This applies even when the subkernel was called by another subkernel, e.g. (``kernel -> subkernel_1 -> subkernel_2``). An exception in ``subkernel_2`` is sent straight to the master device and cannot be caught by ``subkernel_1``.
 
 Message passing
 ^^^^^^^^^^^^^^^
