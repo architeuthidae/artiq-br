@@ -156,8 +156,8 @@ Other notes:
 * Strictly increasing (coarse) timestamps never cause sequence errors. 
 * Strictly increasing *fine* timestamps within the same coarse cycle may still cause sequence errors. 
 * The number of lanes is a hard limit on the number of RTIO output events that may be emitted within one coarse cycle.  
-* Whether a particular sequence of timestamps causes a sequence error or not is fully deterministic (starting from a known RTIO state, e.g. after a reset). Adding a constant offset to the sequence will not affect the result. 
-* Zero-duration methods (such as :meth:`artiq.coredevice.ttl.TTLOut.on()`) do not advance the timeline and so will always consume additional lanes if they are scheduled simultaneously. Adding a delay of at least one coarse RTIO cycle will prevent this (e.g. ``delay_mu(np.int64(self.core.ref_multiplier))``). 
+* Zero-duration methods (such as :meth:`artiq.coredevice.ttl.TTLOut.on()`) do not advance the timeline and so will always consume additional lanes if they are scheduled simultaneously. Adding a delay of at least one coarse RTIO cycle will prevent this (e.g. ``delay_mu(np.int64(self.core.ref_multiplier))``).
+* Whether a particular sequence of timestamps causes a sequence error or not is *almost* deterministic (starting from a known RTIO state, e.g. after a reset). Adding a constant offset to the sequence will normally not affect the result. The only wiggle room comes from event spreading: the SED judges 'fullness' of a lane based on a certain high watermark of number of events in a lane, which is not perfectly deterministic -- events leave the lane in real time and therefore deterministically, but enter whenever the CPU schedules them, which is dependent on CPU execution time jitter.  
 
 .. note:: 
   To change the number of SED lanes, it is necessary to recompile the gateware and reflash your core device. Use the ``sed_lanes`` field in your system description file to set the value, then follow the instructions in :doc:`developing`. Alternatively, if you have an active firmware subscription with M-Labs, contact helpdesk@ for edited binaries.   
