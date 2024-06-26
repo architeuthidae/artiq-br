@@ -169,6 +169,8 @@ The program below exemplifies how to use logging: ::
         main()
 
 
+.. _ndsp-integration: 
+
 Integration with ARTIQ experiments
 ----------------------------------
 
