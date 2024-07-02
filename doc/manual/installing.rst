@@ -285,30 +285,30 @@ Some additional steps are necessary to ensure that OpenOCD can communicate with 
 
 *  On Linux, first ensure that the current user belongs to the ``plugdev`` group (i.e. ``plugdev`` shown when you run ``$ groups``). If it does not, run ``$ sudo adduser $USER plugdev`` and re-login.
 
-If you installed OpenOCD on Linux using Nix, use the ``which`` command to determine the path to OpenOCD, and then copy the udev rules: ::
+  If you installed OpenOCD on Linux using Nix, use the ``which`` command to determine the path to OpenOCD, and then copy the udev rules: ::
 
-  $ which openocd
-  /nix/store/2bmsssvk3d0y5hra06pv54s2324m4srs-openocd-mlabs-0.10.0/bin/openocd
-  $ sudo cp /nix/store/2bmsssvk3d0y5hra06pv54s2324m4srs-openocd-mlabs-0.10.0/share/openocd/contrib/60-openocd.rules /etc/udev/rules.d
-  $ sudo udevadm trigger
+    $ which openocd
+    /nix/store/2bmsssvk3d0y5hra06pv54s2324m4srs-openocd-mlabs-0.10.0/bin/openocd
+    $ sudo cp /nix/store/2bmsssvk3d0y5hra06pv54s2324m4srs-openocd-mlabs-0.10.0/share/openocd/contrib/60-openocd.rules /etc/udev/rules.d
+    $ sudo udevadm trigger
 
-NixOS users should of course configure OpenOCD through ``/etc/nixos/configuration.nix`` instead.
+  NixOS users should of course configure OpenOCD through ``/etc/nixos/configuration.nix`` instead.
 
-If you installed OpenOCD on Linux using Conda and are using the Conda environment ``artiq``, then execute the statements below. If you are using a different environment, you will have to replace ``artiq`` with the name of your environment::
+* If you installed OpenOCD on Linux using Conda and are using the Conda environment ``artiq``, then execute the statements below. If you are using a different  environment, you will have to replace ``artiq`` with the name of your environment::
 
-  $ sudo cp ~/.conda/envs/artiq/share/openocd/contrib/60-openocd.rules /etc/udev/rules.d
-  $ sudo udevadm trigger
+    $ sudo cp ~/.conda/envs/artiq/share/openocd/contrib/60-openocd.rules /etc/udev/rules.d
+    $ sudo udevadm trigger
 
 * On Windows, a third-party tool, `Zadig <http://zadig.akeo.ie/>`_, is necessary. It is also included with the MSYS2 offline installer and available from the Start Menu as ``Zadig Driver Installer``. Use it as follows:
 
-1. Make sure the FPGA board's JTAG USB port is connected to your computer.
-2. Activate Options → List All Devices.
-3. Select the "Digilent Adept USB Device (Interface 0)" or "FTDI Quad-RS232 HS" (or similar)
-   device from the drop-down list.
-4. Select WinUSB from the spinner list.
-5. Click "Install Driver" or "Replace Driver".
+  1. Make sure the FPGA board's JTAG USB port is connected to your computer.
+  2. Activate Options → List All Devices.
+  3. Select the "Digilent Adept USB Device (Interface 0)" or "FTDI Quad-RS232 HS" (or similar)
+     device from the drop-down list.
+  4. Select WinUSB from the spinner list.
+  5. Click "Install Driver" or "Replace Driver".
 
-You may need to repeat these steps every time you plug the FPGA board into a port where it has not been plugged into previously on the same system.
+You may need to repeat these steps every time you plug the FPGA board into a port it has not previously been plugged into on the same system.
 
 .. _writing-flash:
 
@@ -321,7 +321,7 @@ First ensure the board is connected to your computer. In the case of Kasli, the 
 
       $ artiq_coremgmt [-D 192.168.1.75] config write -f boot [afws_directory]/boot.bin
 
-If the Kasli-SoC won't boot due to nonexistent or corrupted firmware, extract the SD card and copy ``boot.bin`` onto it manually.
+  If the Kasli-SoC won't boot due to nonexistent or corrupted firmware, extract the SD card and copy ``boot.bin`` onto it manually.
 
 * For Kasli::
 
@@ -350,22 +350,25 @@ If you purchased a Kasli or Kasli-SoC device from M-Labs, it usually comes with 
 
   $ artiq_coremgmt -D 192.168.1.75 config write -s ip [new IP]
 
-and then rebooting the device
+and then rebooting the device: :: 
 
   $ artiq_coremgmt reboot 
 
 * For Kasli-SoC: 
   
-If the ``ip`` config is not set, Kasli-SoC firmware defaults to using the IP address ``192.168.1.56``. It can then be changed with the procedure above. 
+  If the ``ip`` config is not set, Kasli-SoC firmware defaults to using the IP address ``192.168.1.56``. It can then be changed with the procedure above. 
 
 * For Kasli or KC705: 
 
-If the ``ip`` config field is not set or set to ``use_dhcp``, the device will attempt to obtain an IP address and default gateway using DHCP. If a static IP address is nonetheless wanted, it can be flashed directly (OpenOCD must be installed and configured, as above), along with, as necessary, default gateway, IPv6, and/or MAC address: ::
+  If the ``ip`` config field is not set or set to ``use_dhcp``, the device will attempt to obtain an IP address and default gateway using DHCP. If a static IP address is nonetheless wanted, it can be flashed directly (OpenOCD must be installed and configured, as above), along with, as necessary, default gateway, IPv6, and/or MAC address: ::
 
-  $ artiq_mkfs flash_storage.img [-s mac xx:xx:xx:xx:xx:xx] [-s ip xx.xx.xx.xx/xx] [-s ipv4_default_route xx.xx.xx.xx] [-s ip6 xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/xx] [-s ipv6_default_route xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx]
-  $ artiq_flash -t [board] -V [variant] -f flash_storage.img storage start
+    $ artiq_mkfs flash_storage.img [-s mac xx:xx:xx:xx:xx:xx] [-s ip xx.xx.xx.xx/xx] [-s ipv4_default_route xx.xx.xx.xx] [-s ip6 xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/xx] [-s ipv6_default_route xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx]
+    $ artiq_flash -t [board] -V [variant] -f flash_storage.img storage start
 
-On Kasli or Kasli SoC devices, specifying the MAC address is unnecessary, as they can obtain it from their EEPROM. If you only want to access the core device from the same subnet, default gateway and IPv4 prefix length may also be ommitted. Regardless of board, once a device is reachable by ``artiq_coremgmt``, any of these fields can be accessed using ``artiq_coremgmt config write`` and ``artiq_coremgt config read``; see also :ref:`Utilities <core-device-management-tool>`.     
+On Kasli or Kasli SoC devices, specifying the MAC address is unnecessary, as they can obtain it from their EEPROM. If you only want to access the core device from the same subnet, default gateway and IPv4 prefix length may also be ommitted. Regardless of board, once a device is reachable by ``artiq_coremgmt``, any of these fields can be accessed using ``artiq_coremgmt config write`` and ``artiq_coremgt config read``. 
+
+.. seealso:: 
+  More information on the core device configuration flash storage and the ``artiq_coremgmt`` tool can be found on the :doc:`core_device` page.
 
 If DHCP has been used the address can be found in the console output, which can be viewed using: ::
 
@@ -387,7 +390,7 @@ Flash idle or startup kernel
 
 The idle kernel is the kernel (that is, a piece of code running on the core device; see :ref:`next topic <connecting-to-the-core-device>` for more information about kernels) which the core device runs whenever it is not connected to the host via Ethernet. This kernel is therefore stored immediately in the :ref:`core device configuration flash storage <core-device-flash-storage>`.
 
-To flash the idle kernel, first compile an idle experiment. Since the core device is not connected to the host, RPCs (calling Python code running on the host from the kernel) are forbidden, and its ``run()`` method must be a kernel, marked correctly with the ``@kernel`` decorator. Write the compiled experiment to the core device configuration flash storage, under the key ``idle_kernel``: ::
+To flash the idle kernel, first compile an idle experiment. Since the core device is not connected to the host, RPCs (calling Python code running on the host from the kernel) are forbidden, and its ``run()`` method must be a kernel, marked correctly with the ``@kernel`` decorator. See ``artiq/examples/kasli/idle_kernel.py`` for an example. Write the compiled experiment to the core device configuration flash storage, under the key ``idle_kernel``: ::
 
   $ artiq_compile idle.py
   $ artiq_coremgmt config write -f idle_kernel idle.elf
@@ -406,7 +409,8 @@ The default is to use an internal 125MHz clock. To select a source, use a comman
   $ artiq_coremgmt config write -s rtio_clock int_125  # internal 125MHz clock (default)
   $ artiq_coremgmt config write -s rtio_clock ext0_synth0_10to125  # external 10MHz reference used to synthesize internal 125MHz
 
-See :ref:`core-device-clocking` for availability of specific options.    
+.. seealso::
+  More information on clocking options can be found on the :ref:`Core device <core-device-clocking>` page. 
 
 Set up resolving RTIO channels to their names
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -416,7 +420,8 @@ This feature allows you to print the channels' respective names alongside with t
   $ artiq_rtiomap dev_map.bin
   $ artiq_coremgmt config write -f device_map dev_map.bin
 
-.. note:: More information on the ``artiq_rtiomap`` utility can be found on the :ref:`Utilities <rtiomap-tool>` page.
+.. seealso:: 
+  More information on the ``artiq_rtiomap`` utility can be found on the :ref:`Utilities <rtiomap-tool>` page.
 
 Load the DRTIO routing table
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
