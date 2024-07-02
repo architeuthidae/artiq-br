@@ -14,6 +14,10 @@ This tool serves as a client for building tailored firmware and gateware from M-
    :prog: afws_client 
    :nodescription: 
    :nodefault: 
+
+   passwd 
+      .. warning:: 
+         After receiving your credentials from M-Labs, it is strongly recommended to change your password as soon as possible. Only alphanumeric symbols and underscores [a-zA-Z0-9\_] are allowed in AFWS passwords. If other symbols are input, they may be silently ignored, which can make logging in unpredictable or impossible. In emergencies passwords can be reset by contacting ``helpdesk@``.  
    
 Static compiler
 ---------------
